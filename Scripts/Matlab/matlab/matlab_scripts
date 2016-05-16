@@ -1,0 +1,33 @@
+## Calculate average concentration of the ligand:
+
+clear all
+
+filename='../scripts/scaled_test_D50_rateProd865_dilFac46_distSrc0.5';
+data=permute(hdf5read(filename,'/dataset1'),[3,2,1]);
+sizedata=size(data);
+sumdata=zeros(1);
+avgdata=zeros(sizedata(1),sizedata(2),sizedata(3));
+for x=1:sizedata(1)
+    for y=1:sizedata(2)
+        for z=1:sizedata(3)
+            sumdata=sumdata+data(x,y,z);
+        end
+    end
+end
+for x1=1:sizedata(1)
+    for y1=1:sizedata(2)
+        for z1=1:sizedata(3)
+            avgdata(x1,y1,z1)=sumdata/(sizedata(1)*sizedata(2)*sizedata(3));
+            mindata(x1,y1,z1)=data(sizedata(1),sizedata(2),sizedata(3));
+        end
+    end
+end
+
+
+delete('avg_ligand.h5');
+h5create('avg_ligand.h5', '/dataset1', size(permute(avgdata,[3,2,1])));
+h5write('avg_ligand.h5', '/dataset1', permute(avgdata,[3,2,1]));
+
+delete('min_ligand.h5');
+h5create('min_ligand.h5', '/dataset1', size(permute(mindata,[3,2,1])));
+h5write('min_ligand.h5', '/dataset1', permute(mindata,[3,2,1]));
